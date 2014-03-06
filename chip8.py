@@ -22,7 +22,7 @@ P_SIZE = 8 # Pixel size
 W_WIDTH = S_WIDTH * P_SIZE # window width
 W_HEIGHT = S_HEIGHT * P_SIZE # window height
 FPS = 60 # screen frame rate (Hz)
-CPUSPEED = 1000 # CPU freq (Hz) max seems to be 20kHz
+CPUSPEED = 250 # CPU freq (Hz) max seems to be 20kHz
 INSPERFRAME = int(round(CPUSPEED/FPS)) # number of instruction per frame 
                                        # not perfect, but should do the trick
 
@@ -58,6 +58,7 @@ class CPU(object):
 		self.timerSound  = 0 # sound timer
 		self.pc          = MEM_OFFSET # program counter
 		self.matrix      = [[Pixel(i,j,BLACK) for j in xrange(S_HEIGHT)] for i in xrange(S_WIDTH)]
+		self.loadFont()
 
 	def clearScreen(self):
 		self.matrix      = [[Pixel(i,j,BLACK) for j in xrange(S_HEIGHT)] for i in xrange(S_WIDTH)]		
@@ -85,7 +86,9 @@ class CPU(object):
 		X=(oc & 0x0F00) >> 8
 		Y=(oc & 0x00F0) >> 4
 		N=(oc & 0x000F)
-		#print self.pc, hex4(oc), insID
+		self.device.eventMutex.acquire()
+		print self.pc, hex4(oc), insID
+		self.device.eventMutex.release()
 		if insID not in self.insSeen : self.insSeen.append(insID)
 		# if bad instruction ID back to the begining
 		if insID == -1 :
@@ -106,6 +109,24 @@ class CPU(object):
 			if opcode & ins[0] == ins[1] :
 				return i
 		return -1
+
+	def loadFont(self):
+		self.memory[0]=0xF0;self.memory[1]=0x90;self.memory[2]=0x90;self.memory[3]=0x90; self.memory[4]=0xF0; # O
+		self.memory[5]=0x20;self.memory[6]=0x60;self.memory[7]=0x20;self.memory[8]=0x20;self.memory[9]=0x70; # 1
+		self.memory[10]=0xF0;self.memory[11]=0x10;self.memory[12]=0xF0;self.memory[13]=0x80; self.memory[14]=0xF0; # 2
+		self.memory[15]=0xF0;self.memory[16]=0x10;self.memory[17]=0xF0;self.memory[18]=0x10;self.memory[19]=0xF0; # 3
+		self.memory[20]=0x90;self.memory[21]=0x90;self.memory[22]=0xF0;self.memory[23]=0x10;self.memory[24]=0x10; # 4
+		self.memory[25]=0xF0;self.memory[26]=0x80;self.memory[27]=0xF0;self.memory[28]=0x10;self.memory[29]=0xF0; # 5
+		self.memory[30]=0xF0;self.memory[31]=0x80;self.memory[32]=0xF0;self.memory[33]=0x90;self.memory[34]=0xF0; # 6
+		self.memory[35]=0xF0;self.memory[36]=0x10;self.memory[37]=0x20;self.memory[38]=0x40;self.memory[39]=0x40; # 7
+		self.memory[40]=0xF0;self.memory[41]=0x90;self.memory[42]=0xF0;self.memory[43]=0x90;self.memory[44]=0xF0; # 8
+		self.memory[45]=0xF0;self.memory[46]=0x90;self.memory[47]=0xF0;self.memory[48]=0x10;self.memory[49]=0xF0; # 9
+		self.memory[50]=0xF0;self.memory[51]=0x90;self.memory[52]=0xF0;self.memory[53]=0x90;self.memory[54]=0x90; # A
+		self.memory[55]=0xE0;self.memory[56]=0x90;self.memory[57]=0xE0;self.memory[58]=0x90;self.memory[59]=0xE0; # B
+		self.memory[60]=0xF0;self.memory[61]=0x80;self.memory[62]=0x80;self.memory[63]=0x80;self.memory[64]=0xF0; # C
+		self.memory[65]=0xE0;self.memory[66]=0x90;self.memory[67]=0x90;self.memory[68]=0x90;self.memory[69]=0xE0; # D
+		self.memory[70]=0xF0;self.memory[71]=0x80;self.memory[72]=0xF0;self.memory[73]=0x80;self.memory[74]=0xF0; # E
+		self.memory[75]=0xF0;self.memory[76]=0x80;self.memory[77]=0xF0;self.memory[78]=0x80;self.memory[79]=0x80; # F
 
 	def initInstructions(self):
 		self.mask = []
@@ -344,6 +365,17 @@ class CPU(object):
 			self.V[15] = 0
 		self.I = res % 0xFFF
 
+	# FX29 : Sets I to the location of the sprite for the character in VX
+	def ins31(self, X, Y, N):
+		self.I=self.V[X]*5
+
+	# FX33 :  take the decimal representation of VX, place the hundreds digit in memory at location in I,
+	#         the tens digit at location I+1, and the ones digit at location I+2
+	def ins32(self, X, Y, N):
+		self.memory[self.I]=(self.V[X]/100)%10 # hundreds digit
+		self.memory[self.I+1]=(self.V[X]/10)%10 # tens digit
+		self.memory[self.I+2]=(self.V[X])%10 # ones digit
+
 	# FX55 : Stores V0 to VX in memory starting at address I
 	def ins33(self, X, Y, N):
 		#print '   set %s to %s'%(',V'.join(range(X)), str(self.memory[self.I:self.I+X]))
@@ -371,6 +403,7 @@ class Chip8(object):
 		self.eventQueue = []
 		self.eventMutex = Lock()
 		self.loop = True
+		self.waitingKey = False
 	
 	def draw(self):
 		for l in self.cpu.matrix:
@@ -400,32 +433,20 @@ class Chip8(object):
 		for e in self.eventQueue :
 			k, v = e
 			if k in self.keymap :
+				if self.waitingKey == -1 :
+					if v == 1 :
+						self.waitingKey = self.keymap[k]
+						continue
 				self.cpu.keys[self.keymap[k]] = v
 		self.eventQueue = []
 
 
 
 	def waitKey(self):
-		self.eventMutex.acquire()
-		self.eventQueue = [] # make sure we get a NEW event
-		self.eventMutex.release()
-		while self.loop :
-			self.eventMutex.acquire()
-			if len(self.eventQueue) == 0 :
-				self.eventMutex.release()
-				time.sleep(0.1)
-			else :
-				res = None
-				for e in self.eventQueue :
-					k, v = e
-					if k in self.keymap :
-						if e[1] == 1 : # keyDown
-							self.eventQueue = [] # cleanup
-							self.eventMutex.release()
-							return self.keymap[k]
-				self.eventMutex.release()
-		return 0 # doesn't matter, since if we reach this statement it means the main loop is over
-
+		self.waitingKey = -1 # atomic
+		while self.waitingKey == -1 and self.loop:
+			time.sleep(0.1)
+		return self.waitingKey
 
 
 		
