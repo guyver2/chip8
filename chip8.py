@@ -404,6 +404,7 @@ class Chip8(object):
 		self.eventMutex = Lock()
 		self.loop = True
 		self.waitingKey = False
+		self.soundToPlay = False
 	
 	def draw(self):
 		for l in self.cpu.matrix:
@@ -415,6 +416,9 @@ class Chip8(object):
 
 	def process(self):
 		self.step()
+		if self.cpu.timerSound != 0:
+			self.soundToPlay = True
+			self.cpu.timerSound = 0
 		dt = self.clock.tick_busy_loop(CPUSPEED) #needs accuracy
 		# dt = self.clock.tick(CPUSPEED) #needs accuracy
 		self.eventMutex.acquire()

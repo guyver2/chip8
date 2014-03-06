@@ -83,6 +83,7 @@ if __name__ == '__main__':
 		romFile = 'c8games/MAZE'
 	pygame.init()
 	pygame.mixer.init()
+	beep = pygame.mixer.Sound('beep.wav')
 	screen = pygame.display.set_mode((chip8.W_WIDTH,chip8.W_HEIGHT))
 	pygame.display.set_caption(chip8.NAME+' : '+romFile)
 	clock = pygame.time.Clock()
@@ -111,7 +112,11 @@ if __name__ == '__main__':
 			emu.eventQueue.append([k,0])
 		emu.processQueue()
 		emu.eventMutex.release()
-		#print "draw"
+		# play sound if need be
+		if emu.soundToPlay:
+			beep.play()
+			emu.soundToPlay = False
+		# draw
 		emu.draw()
 		screen.blit(emu.screen,(0,0))
 		pygame.display.update()
