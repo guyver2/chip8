@@ -5,7 +5,9 @@ from random import randint
 from threading import Lock
 import time
 # Definition of a chip 8 CPU
+# complete documentation here : http://mattmik.com/chip8.html
 
+# output a 16 bit heximal value on 4 digit with preceeding 0s
 def hex4(nb):
 	return "0x%04X"%nb
 
