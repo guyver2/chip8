@@ -1,0 +1,5 @@
+.chip8_keymap.txt
+*.pyc
+chip8.sublime-project
+chip8.sublime-workspace
+screenshots/
