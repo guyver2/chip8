@@ -89,7 +89,7 @@ class CPU(object):
 		Y=(oc & 0x00F0) >> 4
 		N=(oc & 0x000F)
 		self.device.eventMutex.acquire()
-		print self.pc, hex4(oc), insID
+		#print self.pc, hex4(oc), insID
 		self.device.eventMutex.release()
 		if insID not in self.insSeen : self.insSeen.append(insID)
 		# if bad instruction ID back to the begining

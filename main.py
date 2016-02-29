@@ -80,7 +80,7 @@ if __name__ == '__main__':
 	if len(sys.argv) > 1 :
 		romFile = sys.argv[1]
 	else :
-		romFile = 'c8games/MAZE'
+		romFile = 'c8games/MAZE.ch8'
 	pygame.init()
 	pygame.mixer.init()
 	beep = pygame.mixer.Sound('beep.wav')
