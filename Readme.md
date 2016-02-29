@@ -64,13 +64,13 @@ This is a small project I was very interested to try for a long time without act
 
 
 # Screenshots :  
-![im1](http://git.sxbn.org/chip8/screenshots/chip8_00.jpg)
-![im2](http://git.sxbn.org/chip8/screenshots/chip8_01.jpg)
-![im3](http://git.sxbn.org/chip8/screenshots/chip8_02.jpg)
-![im4](http://git.sxbn.org/chip8/screenshots/chip8_03.jpg)
-![im5](http://git.sxbn.org/chip8/screenshots/chip8_04.jpg)
-![im6](http://git.sxbn.org/chip8/screenshots/chip8_05.jpg)
-![im7](http://git.sxbn.org/chip8/screenshots/chip8_06.jpg)
-![im8](http://git.sxbn.org/chip8/screenshots/chip8_07.jpg)
-![im9](http://git.sxbn.org/chip8/screenshots/chip8_08.jpg)
-![im10](http://git.sxbn.org/chip8/screenshots/chip8_09.jpg)
+![im1](http://sxbn.org/~antoine/git/chip8/screenshots/chip8_00.jpg)
+![im2](http://sxbn.org/~antoine/git/chip8/screenshots/chip8_01.jpg)
+![im3](http://sxbn.org/~antoine/git/chip8/screenshots/chip8_02.jpg)
+![im4](http://sxbn.org/~antoine/git/chip8/screenshots/chip8_03.jpg)
+![im5](http://sxbn.org/~antoine/git/chip8/screenshots/chip8_04.jpg)
+![im6](http://sxbn.org/~antoine/git/chip8/screenshots/chip8_05.jpg)
+![im7](http://sxbn.org/~antoine/git/chip8/screenshots/chip8_06.jpg)
+![im8](http://sxbn.org/~antoine/git/chip8/screenshots/chip8_07.jpg)
+![im9](http://sxbn.org/~antoine/git/chip8/screenshots/chip8_08.jpg)
+![im10](http://sxbn.org/~antoine/git/chip8/screenshots/chip8_09.jpg)
