@@ -80,6 +80,12 @@ class CPU(object):
 	def romToMem(self):
 		l = self.romData.shape[0]
 		self.memory[MEM_OFFSET:MEM_OFFSET+l] = self.romData
+	
+	def printReg(self):
+		print "[",
+		for i in xrange(15):
+			print self.V[i],
+		print "%d]"%(self.V[15])
 
 	# process one instruction
 	def step(self):
@@ -90,6 +96,7 @@ class CPU(object):
 		N=(oc & 0x000F)
 		self.device.eventMutex.acquire()
 		#print self.pc, hex4(oc), insID
+		#self.printReg()
 		self.device.eventMutex.release()
 		if insID not in self.insSeen : self.insSeen.append(insID)
 		# if bad instruction ID back to the begining
@@ -174,7 +181,7 @@ class CPU(object):
 				self.instructions.append(getattr(self, 'ins%d'%i))
 			except :
 				self.instructions.append(getattr(self, 'NOP'))
-		for n, i in enumerate(self.instructions) : print n, i
+		#for n, i in enumerate(self.instructions) : print n, i
 
 
 	# default instruction, does nothing
@@ -197,7 +204,7 @@ class CPU(object):
 			print "STACK UNDERFLOW"
 			sys.exit(1)
 		else :
-			#print 'return ', self.stack, self.nbJump-1
+			#print 'return from subroutine', self.stack, self.nbJump-1
 			self.pc = self.stack[self.nbJump-1]
 			self.nbJump -= 1
 
@@ -217,6 +224,7 @@ class CPU(object):
 			self.nbJump += 1
 			self.pc = (X<<8)+(Y<<4)+N
 			self.pc -= 2 # because of +2 at the end of the step
+			#print 'call subroutine', self.stack, self.nbJump
 
 	# 3XNN : Skips the next instruction if VX equals NN.
 	def ins5(self, X, Y, N):
@@ -424,7 +432,7 @@ class Chip8(object):
 		dt = self.clock.tick_busy_loop(CPUSPEED) #needs accuracy
 		# dt = self.clock.tick(CPUSPEED) #needs accuracy
 		self.eventMutex.acquire()
-		print 'cpu', dt
+		#print 'cpu', dt
 		self.eventMutex.release()
 
 	def loadRom(self, filename):

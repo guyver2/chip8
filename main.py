@@ -122,11 +122,11 @@ if __name__ == '__main__':
 		pygame.display.update()
 		dt = clock.tick(chip8.FPS)
 		emu.eventMutex.acquire()
-		print 'render', dt
+		#print 'render', dt
 		emu.eventMutex.release()
 		
 
-	print sorted(emu.cpu.insSeen)
+	#print sorted(emu.cpu.insSeen)
 
 	# proper exit
 	chip.loop = False
