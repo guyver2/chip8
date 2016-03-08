@@ -33,7 +33,7 @@ This is a small project I was very interested to try for a long time without act
 	* python 2.7 (or more I guess...)
 	* pygame 1.9.2
 	* the emulator itself
-	`git clone http://git.sxbn.org/chip8.git`
+	`git clone https://github.com/guyver2/chip8.git`
 
 - Opening a ROM :  
 	You may specify which ROM you want to play within the emulator using the following command :  
@@ -60,7 +60,6 @@ This is a small project I was very interested to try for a long time without act
 
 - Step by step [tutorial](http://fr.openclassrooms.com/informatique/cours/l-emulation-console)
 - Complete documentation : [http://mattmik.com/chip8.html](http://mattmik.com/chip8.html)
-- Same page, [local copy](http://git.sxbn.org/chip8/doc/chip8.html) (as granted by the licence)
 
 
 # Screenshots :  
