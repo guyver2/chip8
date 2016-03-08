@@ -16,7 +16,7 @@
 - Quick launch :  
 	`python main.py`  
 - Download :  
-	`git clone http://git.sxbn.org/chip8.git`  
+	`git clone https://github.com/guyver2/chip8.git`  
 
 
 
